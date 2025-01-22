@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { PieChartComponent } from 'src/app/components/pie-chart/pie-chart.component';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { PieChartDatas } from 'src/app/core/models/PieChartDatas';
@@ -14,16 +14,19 @@ interface PieChartData {
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
   public olympics?: Olympic[];
 
-  constructor(private olympicService: OlympicService) {
+  constructor(private olympicService: OlympicService, private cdk: ChangeDetectorRef) {
+
   }
 
   ngOnInit(): void {
-    this.olympicService.getOlympics().subscribe((olympics) => {
+    this.olympicService.olympics$.subscribe((olympics) => {
       if(olympics) this.olympics = olympics;
+      this.cdk.markForCheck();
     });
   }
 
