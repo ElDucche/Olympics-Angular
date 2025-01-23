@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Olympic } from '../core/models/Olympic';
+import { OlympicService } from '../core/services/olympic.service';
 
 @Component({
   selector: 'app-detail',
@@ -7,5 +10,11 @@ import { Component } from '@angular/core';
   templateUrl: './detail.component.html'
 })
 export class DetailComponent {
+  route : ActivatedRoute = inject(ActivatedRoute);
+  countryName : string;
+  // olympicData : Olympic;
 
+  constructor(route: ActivatedRoute, private olympic$: OlympicService) {
+    this.countryName = String(route.snapshot.params['name']).toLowerCase()
+  }
 }
