@@ -8,12 +8,6 @@ import { Olympic } from 'src/app/core/models/Olympic';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router } from '@angular/router';
-import { filter, map, Observable, take } from 'rxjs';
-
-interface PieChartData {
-  name: string;
-  value: number;
-}
 
 @Component({
   selector: 'app-home',
@@ -25,8 +19,9 @@ export class HomeComponent implements OnInit {
   view : [number, number] = [700, 400];
 
   constructor(
-    private olympicService: OlympicService,
-    private cdk: ChangeDetectorRef
+    private cdk: ChangeDetectorRef,
+    private router: Router,
+    private olympicService: OlympicService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +56,9 @@ export class HomeComponent implements OnInit {
   };
 
   onSelect(data: any): void {
+    const { name } = JSON.parse(JSON.stringify(data));
     console.log('Item clicked', JSON.parse(JSON.stringify(data)));
+    const slug = name.split(' ').join('-').toLowerCase();
+    this.router.navigate([`/details/${slug}`]);
   }
 }
