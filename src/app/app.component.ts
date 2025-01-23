@@ -7,6 +7,7 @@ import { OlympicService } from './core/services/olympic.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
+  title = 'olympic-games-starter';
   constructor(private olympicService: OlympicService) {}
 
   ngOnInit(): void {
