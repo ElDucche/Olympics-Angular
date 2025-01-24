@@ -1,0 +1,56 @@
+<a
+  routerLink="/"
+  class="fixed top-0 left-0 p-6 text-7xl text-teal-600 hover:scale-105 active:scale-95 cursor-pointer transition-all"
+  >←</a
+>
+<main class="grid gap-8 w-fit p-2 lg:w-[32rem]">
+  <h2
+    class="px-6 py-2 bg-teal-700 text-white text-xl lg:text-5xl font-extralight rounded-xl text-center"
+  >
+    {{ olympicData?.country }}
+  </h2>
+  <div class="flex gap-6 items-center w-full">
+    <div
+      class="h-full grid gap-2 lg:gap-4 place-content-center rounded-xl border-2 border-teal-700 p-4 w-full"
+    >
+      <h3 class="md:text-xl lg:text-2xl font-extralight text-center">
+        Number of entries
+      </h3>
+      <span class="text-center font-semibold text-xl lg:text-3xl">{{
+        olympicData?.participations?.length
+      }}</span>
+    </div>
+    <div
+      class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
+    >
+      <h3 class="lg:text-2xl md:text-lg font-extralight text-center">
+        Total number medals
+      </h3>
+      <span class="text-center font-semibold text-xl lg:text-3xl">
+        {{ getTotalMedals() }}
+      </span>
+    </div>
+    <div
+      class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
+    >
+      <h3 class="lg:text-2xl md:text-lg font-extralight text-center">
+        Total number of athletes
+      </h3>
+      <span class="text-center font-semibold text-xl lg:text-3xl">
+        {{ getTotalNumberOfAthletes() }}
+      </span>
+    </div>
+  </div>
+  @if (olympicData) {
+  <ngx-charts-line-chart
+    [results]="convertOlympicDataToLineChartData(olympicData)"
+    [view]="[500, 300]"
+    [showXAxisLabel]="true"
+    [showYAxisLabel]="true"
+    [xAxis]="true"
+    [yAxis]="true"
+    class="border rounded-xl flex items-center justify-center"
+  >
+  </ngx-charts-line-chart>
+  }
+</main>
