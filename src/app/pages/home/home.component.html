@@ -4,11 +4,13 @@
   >
     Medal per Country
   </h2>
-  <div class="flex gap-6 items-center w-full">
+  <div class="grid md:flex gap-6 items-center w-full">
     <div
       class="h-full grid gap-2 lg:gap-4 place-content-center rounded-xl border-2 border-teal-700 p-4 w-full"
     >
-      <h3 class="md:text-xl lg:text-2xl font-extralight text-center">Number of JOs</h3>
+      <h3 class="md:text-xl lg:text-2xl font-extralight text-center">
+        Number of JOs
+      </h3>
       <span
         class="text-center font-semibold text-xl lg:text-3xl"
         >{{ olympics?.[0]?.participations?.length }}</span
@@ -17,15 +19,17 @@
     <div
       class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
     >
-      <h3 class="lg:text-2xl md:text-lg font-extralight text-center">Number of countries</h3>
+      <h3 class="lg:text-2xl md:text-lg font-extralight text-center">
+        Number of countries
+      </h3>
       <span class="text-center font-semibold text-xl lg:text-3xl">
         {{ olympics?.length }}
       </span>
     </div>
   </div>
   @if (olympics) {
-    <ngx-charts-pie-chart
-    [results]="convertOlympicsToPieChartData(olympics)"
+  <ngx-charts-pie-chart
+    [results]="convertOlympicsToPieChartData()"
     [view]="view"
     [labels]="true"
     [doughnut]="false"
@@ -34,8 +38,12 @@
     [explodeSlices]="false"
     [animations]="true"
     (select)="onSelect($event)"
-    class="border rounded-xl"
   >
+    <ng-template #seriesTooltipTemplate let-model="model">
+      This is vertical line tooltip template
+      <pre>{{ model | json }}</pre>
+    </ng-template>
   </ngx-charts-pie-chart>
+
   }
 </main>

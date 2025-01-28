@@ -1,6 +1,6 @@
 <a
   routerLink="/"
-  class="fixed top-0 left-0 p-6 text-7xl text-teal-600 hover:scale-105 active:scale-95 cursor-pointer transition-all"
+  class="fixed top-0 left-0 p-2 md:p-6 text-xl md:text-7xl text-teal-600 hover:scale-105 active:scale-95 cursor-pointer transition-all"
   >←</a
 >
 <main class="grid gap-8 w-fit p-2 lg:w-[32rem]">
@@ -9,7 +9,7 @@
   >
     {{ olympicData?.country }}
   </h2>
-  <div class="flex gap-6 items-center w-full">
+  <div class="grid md:flex gap-6 items-center w-full">
     <div
       class="h-full grid gap-2 lg:gap-4 place-content-center rounded-xl border-2 border-teal-700 p-4 w-full"
     >
@@ -44,11 +44,13 @@
   @if (olympicData) {
   <ngx-charts-line-chart
     [results]="convertOlympicDataToLineChartData(olympicData)"
-    [view]="[500, 300]"
+    [view]="view"
     [showXAxisLabel]="true"
     [showYAxisLabel]="true"
     [xAxis]="true"
     [yAxis]="true"
+    [autoScale]="true"
+    [animations]="false"
     class="border rounded-xl flex items-center justify-center"
   >
   </ngx-charts-line-chart>
