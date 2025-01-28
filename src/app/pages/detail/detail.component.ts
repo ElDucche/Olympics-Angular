@@ -1,31 +1,60 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Olympic } from '../../core/models/Olympic';
-import { OlympicService } from '../../core/services/olympic.service';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { Participation } from 'src/app/core/models/Participation';
+import { Subscription } from 'rxjs';
+import { Olympic } from 'src/app/core/models/Olympic';
+import { OlympicService } from 'src/app/core/services/olympic.service';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [RouterModule, NgxChartsModule],
   templateUrl: './detail.component.html',
+  imports: [NgxChartsModule, RouterModule]
 })
-export class DetailComponent implements OnInit {
-  route: ActivatedRoute = inject(ActivatedRoute);
-  countryName: string;
-  olympicData?: Olympic | null;
+export class DetailComponent implements OnInit, OnDestroy {
+  private subscription!: Subscription;
+  public countryName: string;
+  public olympicData: any;
 
-  constructor(route: ActivatedRoute, private olympic$: OlympicService) {
+  view: [number, number] = [600, 400];
+
+  private viewWidth!: number;
+  private setViewWidth(): void {
+    if (window.innerWidth < 576) {
+      this.viewWidth = 300;
+    } else if (window.innerWidth >= 576 && window.innerWidth < 768) {
+      this.viewWidth = 500;
+    } else if (window.innerWidth >= 768 && window.innerWidth < 992) {
+      this.viewWidth = 700;
+    } else {
+      this.viewWidth = 700;
+    }
+    this.view = [this.viewWidth, 400];
+  }
+
+  constructor(route: ActivatedRoute, private olympic$: OlympicService, private cdk: ChangeDetectorRef) {
     this.countryName = String(route.snapshot.params['name']).toLowerCase();
   }
 
   ngOnInit(): void {
-    this.countryName.split('-').join(' ');
-    this.olympic$.getOlympicByCountry(this.countryName).subscribe((olympic) => {
+    const formattedName = this.countryName.split('-').join(' ');
+    console.log('Country name = ' + formattedName);
+    this.subscription = this.olympic$.getOlympicByCountry(formattedName).subscribe((olympic) => {
       this.olympicData = olympic;
       console.log(this.olympicData);
     });
+    this.cdk.markForCheck();
+    this.setViewWidth();
+    window.addEventListener('resize', () => {
+      this.setViewWidth();
+      this.cdk.markForCheck();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   getTotalMedals(): number {
@@ -46,15 +75,15 @@ export class DetailComponent implements OnInit {
     );
   }
 
-  convertOlympicDataToLineChartData(olympicData: Olympic): {name: string; series: { name: string; value: number }[]}[] {
+  convertOlympicDataToLineChartData(olympicData: Olympic) : { name:string; series: {name: string; value: number}[]}[] {
     return [{
-      name: this.countryName,
-      series: olympicData.participations.map((participation: Participation) => {
+      name: olympicData.country,
+      series: olympicData.participations.map((participation) => {
         return {
-          name: participation.year.toString(),
-          value: participation.medalsCount,
-        };
-      })
-    }];
+          name: String(participation.year),
+          value: participation.medalsCount
+        }
+      })}
+    ]
   }
 }
