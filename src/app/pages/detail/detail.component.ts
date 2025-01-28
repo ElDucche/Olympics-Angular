@@ -22,7 +22,6 @@ interface LineChartDatas {
   standalone: true,
   templateUrl: './detail.component.html',
   imports: [NgxChartsModule, RouterModule],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailComponent implements OnInit {
   public countryName: string;
@@ -52,60 +51,83 @@ export class DetailComponent implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    private olympicService: OlympicService
-  ) // private cdk: ChangeDetectorRef
-  {
+    private olympic$: OlympicService,
+    private cdk: ChangeDetectorRef
+  ) {
     this.countryName = String(route.snapshot.params['name']).toLowerCase();
   }
 
   ngOnInit(): void {
     console.log('Initialisation du composant');
     const formattedName = this.countryName.split('-').join(' ');
-    this.olympic$ = this.olympicService.getOlympicByCountry(formattedName);
-    this.lineChartData$ = this.olympic$.pipe(
-      map((olympic) => this.convertOlympicDataToLineChartData(olympic))
-    );
-    this.totalMedals$ = this.olympic$.pipe(
-      map((olympic) => {
-        return (
-          olympic?.participations?.reduce(
-            (acc: number, curr: any) => acc + curr.medalsCount,
-            0
-          ) || 0
-        );
-      })
-    );
-    this.totalAthletes$ = this.olympic$.pipe(
-      map((olympic) => {
-        return (
-          olympic?.participations?.reduce(
-            (acc: number, curr: any) => acc + curr.athleteCount,
-            0
-          ) || 0
-        );
-      })
-    );
-    // this.cdk.markForCheck();
+    console.log('Country name = ' + formattedName);
+    this.subscription = this.olympic$
+      .getOlympicByCountry(formattedName)
+      .subscribe((olympic) => {
+        this.olympicData = olympic;
+        console.log(this.olympicData);
+      });
+    this.cdk.markForCheck();
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
-      // this.cdk.markForCheck();
+      this.cdk.markForCheck();
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  getTotalMedals(): number {
+    return (
+      this.olympicData?.participations?.reduce(
+        (acc: number, curr: any) => acc + curr.medalsCount,
+        0
+      ) || 0
+    );
+  }
+
+  getTotalNumberOfAthletes(): number {
+    return (
+      this.olympicData?.participations?.reduce(
+        (acc: number, curr: any) => acc + curr.athleteCount,
+        0
+      ) || 0
+    );
+  }
+
+  // Ajouter ces méthodes
+  getYAxisMin(): number {
+    if (!this.olympicData) return 0;
+    const minValue = Math.min(
+      ...this.olympicData.participations.map((p: Participation) => p.medalsCount)
+    );
+    return minValue - 10;
+  }
+
+  getYAxisMax(): number {
+    if (!this.olympicData) return 100;
+    const maxValue = Math.max(
+      ...this.olympicData.participations.map((p : Participation) => p.medalsCount)
+    );
+    return maxValue + 10;
+  }
+
   convertOlympicDataToLineChartData(
-    olympicData: Olympic | undefined
+    olympicData: Olympic
   ): { name: string; series: { name: string; value: number }[] }[] {
     return [
       {
-        name: olympicData?.country || '',
-        series:
-          olympicData?.participations.map((participation) => {
-            return {
-              name: String(participation.year),
-              value: participation.medalsCount,
-            };
-          }) || [],
+        name: olympicData.country,
+        series: olympicData.participations.map((participation) => {
+          return {
+            name: String(participation.year),
+            value: participation.medalsCount,
+          };
+        }),
       },
     ];
   }
