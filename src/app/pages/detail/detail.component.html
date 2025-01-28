@@ -3,7 +3,7 @@
   class="fixed top-0 left-0 p-2 md:p-6 text-xl md:text-7xl text-teal-600 hover:scale-105 active:scale-95 cursor-pointer transition-all"
   >←</a
 >
-<main class="grid gap-8 w-fit p-2 lg:w-[32rem]">
+<main class="grid gap-8 w-fit p-2">
   <h2
     class="px-6 py-2 bg-teal-700 text-white text-xl lg:text-5xl font-extralight rounded-xl text-center"
   >
@@ -49,6 +49,8 @@
     [showYAxisLabel]="true"
     [xAxis]="true"
     [yAxis]="true"
+    [yScaleMin]="getYAxisMin()"
+    [yScaleMax]="getYAxisMax()"
     [autoScale]="true"
     [animations]="false"
     class="border rounded-xl flex items-center justify-center"

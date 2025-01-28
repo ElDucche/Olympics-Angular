@@ -3,13 +3,14 @@ import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { Subscription } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
+import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
   templateUrl: './detail.component.html',
-  imports: [NgxChartsModule, RouterModule]
+  imports: [NgxChartsModule, RouterModule],
 })
 export class DetailComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
@@ -32,17 +33,23 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.view = [this.viewWidth, 400];
   }
 
-  constructor(route: ActivatedRoute, private olympic$: OlympicService, private cdk: ChangeDetectorRef) {
+  constructor(
+    route: ActivatedRoute,
+    private olympic$: OlympicService,
+    private cdk: ChangeDetectorRef
+  ) {
     this.countryName = String(route.snapshot.params['name']).toLowerCase();
   }
 
   ngOnInit(): void {
     const formattedName = this.countryName.split('-').join(' ');
     console.log('Country name = ' + formattedName);
-    this.subscription = this.olympic$.getOlympicByCountry(formattedName).subscribe((olympic) => {
-      this.olympicData = olympic;
-      console.log(this.olympicData);
-    });
+    this.subscription = this.olympic$
+      .getOlympicByCountry(formattedName)
+      .subscribe((olympic) => {
+        this.olympicData = olympic;
+        console.log(this.olympicData);
+      });
     this.cdk.markForCheck();
     this.setViewWidth();
     window.addEventListener('resize', () => {
@@ -75,15 +82,36 @@ export class DetailComponent implements OnInit, OnDestroy {
     );
   }
 
-  convertOlympicDataToLineChartData(olympicData: Olympic) : { name:string; series: {name: string; value: number}[]}[] {
-    return [{
-      name: olympicData.country,
-      series: olympicData.participations.map((participation) => {
-        return {
-          name: String(participation.year),
-          value: participation.medalsCount
-        }
-      })}
-    ]
+  // Ajouter ces méthodes
+  getYAxisMin(): number {
+    if (!this.olympicData) return 0;
+    const minValue = Math.min(
+      ...this.olympicData.participations.map((p: Participation) => p.medalsCount)
+    );
+    return minValue - 10;
+  }
+
+  getYAxisMax(): number {
+    if (!this.olympicData) return 100;
+    const maxValue = Math.max(
+      ...this.olympicData.participations.map((p : Participation) => p.medalsCount)
+    );
+    return maxValue + 10;
+  }
+
+  convertOlympicDataToLineChartData(
+    olympicData: Olympic
+  ): { name: string; series: { name: string; value: number }[] }[] {
+    return [
+      {
+        name: olympicData.country,
+        series: olympicData.participations.map((participation) => {
+          return {
+            name: String(participation.year),
+            value: participation.medalsCount,
+          };
+        }),
+      },
+    ];
   }
 }
