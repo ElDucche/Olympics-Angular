@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   standalone: true,
   templateUrl: './detail.component.html',
   imports: [NgxChartsModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
