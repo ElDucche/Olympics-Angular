@@ -1,4 +1,3 @@
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,15 +9,22 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { map, Observable, take, tap } from 'rxjs';
+
+interface PieChartData {
+  name: string;
+  value: number;
+}
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
   public olympics?: Olympic[];
-  
+  pieChartData$!: Observable<PieChartData[]>;
+
   view: [number, number] = [600, 400];
 
   private viewWidth!: number;
@@ -36,29 +42,28 @@ export class HomeComponent implements OnInit {
   }
 
   constructor(
-    private cdk: ChangeDetectorRef,
+    // private cdk: ChangeDetectorRef,
     private router: Router,
     private olympicService: OlympicService
   ) {}
 
   ngOnInit(): void {
-    this.olympicService.olympics$.subscribe((olympics) => {
-      if (olympics) this.olympics = olympics;
-      this.cdk.markForCheck();
-    });
+    this.pieChartData$ = this.olympicService.olympics$
+      .pipe(
+        map((olympics) => this.convertOlympicsToPieChartData(olympics)),
+      )
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
-      this.cdk.markForCheck();
+      // this.cdk.markForCheck();
     });
   }
 
   convertOlympicsToPieChartData(
-  ): { name: string; value: number }[] {
+    olympics: Olympic[] | null
+  ): PieChartData[] {
     const data: { name: string; value: number }[] = [];
-
-    if (this.olympics) {
-      this.olympics.forEach((olympic) => {
+      olympics?.forEach((olympic) => {
         data.push({
           name: olympic.country,
           value: olympic.participations.reduce(
@@ -67,13 +72,12 @@ export class HomeComponent implements OnInit {
           ),
         });
       });
-    }
-
+      console.log(data);
     return data;
   }
 
-  colorScheme : { domain : Array<string> }= {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  colorScheme: { domain: Array<string> } = {
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
 
   onSelect(data: any): void {

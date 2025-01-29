@@ -29,7 +29,7 @@
   </div>
   @if (olympics) {
   <ngx-charts-pie-chart
-    [results]="convertOlympicsToPieChartData()"
+    [results]="pieChartData$ | async"
     [view]="view"
     [labels]="true"
     [doughnut]="false"
@@ -39,7 +39,7 @@
     [animations]="true"
     (select)="onSelect($event)"
   >
-    <ng-template #seriesTooltipTemplate let-model="model">
+    <ng-template #customTemplate let-model="model">
       This is vertical line tooltip template
       <pre>{{ model | json }}</pre>
     </ng-template>
