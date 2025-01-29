@@ -55,11 +55,9 @@
     [tooltipDisabled]="false"
     (select)="onSelect($event)"
   >
-    <ng-template #tooltipTemplate let-model="model">
-      <div class="w-36 h-16 grid gap-2 justify-center p-0 m-0 inset-0">
-        <h4 class="m-0 text-lg font-light text-white">{{ model.name }}</h4>
-        <span class="text-xl font-light text-white">🏅 {{ model.value }}</span>
-      </div>
+    <ng-template #customTemplate let-model="model">
+      This is vertical line tooltip template
+      <pre>{{ model | json }}</pre>
     </ng-template>
   </ngx-charts-pie-chart>
   <ng-template #loading>
