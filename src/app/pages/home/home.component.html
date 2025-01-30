@@ -11,10 +11,9 @@
       <h3 class="md:text-xl lg:text-2xl font-extralight text-center">
         Number of JOs
       </h3>
-      <span
-        class="text-center font-semibold text-xl lg:text-3xl"
-        >{{ olympics[0].participations.length }}</span
-      >
+      <span class="text-center font-semibold text-xl lg:text-3xl">{{
+        olympics[0].participations.length
+      }}</span>
     </div>
     <div
       class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
@@ -27,24 +26,24 @@
       </span>
     </div>
   </div>
- 
+
   <ngx-charts-pie-chart
     [results]="pieChartData$ | async"
     [view]="view"
     [labels]="true"
     [doughnut]="false"
     [gradient]="false"
-    [arcWidth]="0.15"
+    [arcWidth]="0.75"
     [explodeSlices]="false"
     [animations]="true"
+    [tooltipDisabled]="false"
     (select)="onSelect($event)"
   >
-    <ng-template #customTemplate let-model="model">
-      This is vertical line tooltip template
-      <pre>{{ model | json }}</pre>
+    <ng-template #tooltipTemplate let-model="model" class="w-fit fill-teal-600 m-0 p-0">
+      <div class="bg-teal-600 w-36 h-16 grid gap-2 justify-center">
+        <h4 class="m-0 text-lg font-light text-white">{{ model.name }}</h4>
+        <span class="text-xl font-light text-white">🏅 {{ model.value }}</span>
+      </div>
     </ng-template>
-    
   </ngx-charts-pie-chart>
-
-  
 </main>

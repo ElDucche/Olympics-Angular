@@ -1,10 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
+
+interface LineChartDatas {
+  name: string;
+  series: { name: string; value: number }[];
+}
 
 @Component({
   selector: 'app-detail',
@@ -17,6 +22,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   public countryName: string;
   public olympicData: any;
+  lineChartData!: LineChartDatas[];
 
   view: [number, number] = [600, 400];
 
@@ -44,12 +50,11 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const formattedName = this.countryName.split('-').join(' ');
-    console.log('Country name = ' + formattedName);
     this.subscription = this.olympic$
       .getOlympicByCountry(formattedName)
       .subscribe((olympic) => {
         this.olympicData = olympic;
-        console.log(this.olympicData);
+        this.lineChartData = this.convertOlympicDataToLineChartData(olympic);
       });
     this.cdk.markForCheck();
     this.setViewWidth();
@@ -101,17 +106,17 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   convertOlympicDataToLineChartData(
-    olympicData: Olympic
+    olympicData: Olympic | null
   ): { name: string; series: { name: string; value: number }[] }[] {
     return [
       {
-        name: olympicData.country,
-        series: olympicData.participations.map((participation) => {
+        name: olympicData?.country || '',
+        series: olympicData?.participations.map((participation) => {
           return {
             name: String(participation.year),
             value: participation.medalsCount,
           };
-        }),
+        }) || [],
       },
     ];
   }
