@@ -13,7 +13,7 @@
       </h3>
       <span
         class="text-center font-semibold text-xl lg:text-3xl"
-        >{{ olympics?.[0]?.participations?.length }}</span
+        >{{ olympics[0].participations.length }}</span
       >
     </div>
     <div
@@ -23,11 +23,11 @@
         Number of countries
       </h3>
       <span class="text-center font-semibold text-xl lg:text-3xl">
-        {{ olympics?.length }}
+        {{ olympics.length }}
       </span>
     </div>
   </div>
-  @if (olympics) {
+ 
   <ngx-charts-pie-chart
     [results]="pieChartData$ | async"
     [view]="view"
@@ -43,7 +43,8 @@
       This is vertical line tooltip template
       <pre>{{ model | json }}</pre>
     </ng-template>
+    
   </ngx-charts-pie-chart>
 
-  }
+  
 </main>
