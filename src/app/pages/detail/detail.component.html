@@ -49,7 +49,7 @@
   </div>
   @if (olympicData) {
   <ngx-charts-line-chart
-    [results]="convertOlympicDataToLineChartData(olympicData)"
+    [results]="lineChartData"
     [view]="view"
     [showXAxisLabel]="true"
     [showYAxisLabel]="true"
@@ -59,7 +59,6 @@
     [yScaleMax]="getYAxisMax()"
     [autoScale]="true"
     [animations]="false"
-    class="border rounded-xl flex items-center justify-center"
   >
   </ngx-charts-line-chart>
   }

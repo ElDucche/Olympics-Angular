@@ -5,9 +5,7 @@ import {
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { map, Observable, take, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 interface PieChartData {
   name: string;

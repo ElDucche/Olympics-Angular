@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { map, Observable, Subscription, take } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -20,12 +20,8 @@ interface LineChartDatas {
 })
 export class DetailComponent implements OnInit {
   public countryName: string;
-  olympic$!: Observable<Olympic | undefined>;
-  lineChartData$!: Observable<LineChartDatas[] | undefined>;
-  totalMedals$!: Observable<number>;
-  totalAthletes$!: Observable<number>;
-
-  // Transformer tous mes appels aux méthodes en observable pour pipe | async
+  public olympicData: any;
+  lineChartData!: LineChartDatas[];
 
   view: [number, number] = [600, 400];
 
@@ -55,12 +51,11 @@ export class DetailComponent implements OnInit {
   ngOnInit(): void {
     console.log('Initialisation du composant');
     const formattedName = this.countryName.split('-').join(' ');
-    console.log('Country name = ' + formattedName);
     this.subscription = this.olympic$
       .getOlympicByCountry(formattedName)
       .subscribe((olympic) => {
         this.olympicData = olympic;
-        console.log(this.olympicData);
+        this.lineChartData = this.convertOlympicDataToLineChartData(olympic);
       });
     this.cdk.markForCheck();
     this.setViewWidth();
@@ -112,17 +107,17 @@ export class DetailComponent implements OnInit {
   }
 
   convertOlympicDataToLineChartData(
-    olympicData: Olympic
+    olympicData: Olympic | null
   ): { name: string; series: { name: string; value: number }[] }[] {
     return [
       {
-        name: olympicData.country,
-        series: olympicData.participations.map((participation) => {
+        name: olympicData?.country || '',
+        series: olympicData?.participations.map((participation) => {
           return {
             name: String(participation.year),
             value: participation.medalsCount,
           };
-        }),
+        }) || [],
       },
     ];
   }
