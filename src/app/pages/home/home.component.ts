@@ -5,7 +5,7 @@ import {
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable, take } from 'rxjs';
 
 interface PieChartData {
   name: string;
@@ -17,7 +17,7 @@ interface PieChartData {
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  public olympics!: Olympic[];
+  public olympics$!: Observable<Olympic[] | undefined>;
   pieChartData$!: Observable<PieChartData[]>;
 
   view: [number, number] = [600, 400];
@@ -42,13 +42,11 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pieChartData$ = this.olympicService.olympics$
+    this.olympics$ = this.olympicService.olympics$
+    this.pieChartData$ = this.olympics$
       .pipe(
-        map((olympics) => this.convertOlympicsToPieChartData(olympics))
-      )
-    this.olympicService.olympics$.subscribe((olympics) => {
-      this.olympics = olympics || [];
-    });
+        map((olympics) => this.convertOlympicsToPieChartData(olympics)),
+      ) 
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
@@ -56,7 +54,7 @@ export class HomeComponent implements OnInit {
   }
 
   convertOlympicsToPieChartData(
-    olympics: Olympic[] | null
+    olympics: Olympic[] | undefined
   ): PieChartData[] {
     const data: { name: string; value: number }[] = [];
       olympics?.forEach((olympic) => {
