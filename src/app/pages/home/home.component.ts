@@ -4,12 +4,10 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-
 import { Olympic } from 'src/app/core/models/Olympic';
-import { PieChartDatas } from 'src/app/core/models/PieChartDatas';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router } from '@angular/router';
-import { filter, map, Observable, take } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 interface PieChartData {
   name: string;
@@ -21,12 +19,25 @@ interface PieChartData {
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class HomeComponent implements OnInit {
   public olympics$!: Observable<Olympic[] | undefined>;
   pieChartData$!: Observable<PieChartData[]>;
 
   view: [number, number] = [600, 400];
 
+  private viewWidth!: number;
+  private setViewWidth(): void {
+    if (window.innerWidth < 576) {
+      this.viewWidth = 300;
+    } else if (window.innerWidth >= 576 && window.innerWidth < 768) {
+      this.viewWidth = 500;
+    } else if (window.innerWidth >= 768 && window.innerWidth < 992) {
+      this.viewWidth = 700;
+    } else {
+      this.viewWidth = 700;
+    }
+    this.view = [this.viewWidth, 400];
   }
 
   constructor(
@@ -53,8 +64,8 @@ export class HomeComponent implements OnInit {
   ): PieChartData[] {
     const data: { name: string; value: number }[] = [];
 
-    if (this.olympics) {
-      this.olympics.forEach((olympic) => {
+    if (olympics) {
+      olympics.forEach((olympic) => {
         data.push({
           name: olympic.country,
           value: olympic.participations.reduce(

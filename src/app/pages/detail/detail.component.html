@@ -7,7 +7,7 @@
   <h2
     class="px-6 py-2 bg-teal-700 text-white text-xl lg:text-5xl font-extralight rounded-xl text-center"
   >
-    {{ olympicData?.country }}
+    {{ (olympic$ | async)?.country }}
   </h2>
   <div class="grid md:flex gap-6 items-center w-full">
     <div
@@ -17,7 +17,7 @@
         Number of entries
       </h3>
       <span class="text-center font-semibold text-xl lg:text-3xl">{{
-        olympicData?.participations?.length
+        (olympic$ | async)?.participations?.length
       }}</span>
     </div>
     <div
@@ -27,7 +27,7 @@
         Total number medals
       </h3>
       <span class="text-center font-semibold text-xl lg:text-3xl">
-        {{ getTotalMedals() }}
+        {{ totalMedals$ | async }}
       </span>
     </div>
     <div
@@ -37,7 +37,7 @@
         Total number of athletes
       </h3>
       <span class="text-center font-semibold text-xl lg:text-3xl">
-        {{ getTotalNumberOfAthletes() }}
+        {{ totalAthletes$ | async }}
       </span>
     </div>
   </div>

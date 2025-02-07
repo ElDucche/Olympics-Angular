@@ -46,7 +46,7 @@
     </div>
   </div>
   <ngx-charts-pie-chart
-    [results]="convertOlympicsToPieChartData()"
+    [results]="pieChartData$ | async"
     [view]="view"
     [labels]="true"
     [doughnut]="false"
