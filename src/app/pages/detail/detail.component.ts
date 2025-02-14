@@ -52,9 +52,8 @@ export class DetailComponent implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    private olympicService: OlympicService
-  ) // private cdk: ChangeDetectorRef
-  {
+    private olympicService: OlympicService // private cdk: ChangeDetectorRef
+  ) {
     this.countryName = String(route.snapshot.params['name']).toLowerCase();
   }
 

@@ -19,7 +19,6 @@ interface PieChartData {
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class HomeComponent implements OnInit {
   public olympics$!: Observable<Olympic[] | undefined>;
   pieChartData$!: Observable<PieChartData[]>;
@@ -47,11 +46,10 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.olympics$ = this.olympicService.olympics$
-    this.pieChartData$ = this.olympics$
-      .pipe(
-        map((olympics) => this.convertOlympicsToPieChartData(olympics)),
-      ) 
+    this.olympics$ = this.olympicService.olympics$;
+    this.pieChartData$ = this.olympics$.pipe(
+      map((olympics) => this.convertOlympicsToPieChartData(olympics))
+    );
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
@@ -78,8 +76,8 @@ export class HomeComponent implements OnInit {
 
     return data;
   }
-  colorScheme : { domain : Array<string> }= {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  colorScheme: { domain: Array<string> } = {
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
 
   onSelect(data: any): void {
@@ -88,5 +86,4 @@ export class HomeComponent implements OnInit {
     const slug = name.split(' ').join('-').toLowerCase();
     this.router.navigate([`/details/${slug}`]);
   }
-
 }

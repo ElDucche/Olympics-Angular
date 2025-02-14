@@ -4,11 +4,13 @@
   >←</a
 >
 <main class="grid gap-8 w-fit p-2 lg:w-[32rem]">
-  <h2
-    class="px-6 py-2 bg-teal-700 text-white text-xl lg:text-5xl font-extralight rounded-xl text-center"
-  >
-    {{ (olympic$ | async)?.country }}
-  </h2>
+  <ng-container *ngIf="olympic$ | async; else loading">
+    <h2
+      class="px-6 py-2 bg-teal-700 text-white text-xl lg:text-5xl font-extralight rounded-xl text-center"
+    >
+      {{ (olympic$ | async)?.country }}
+    </h2>
+  </ng-container>
   <div class="grid md:flex gap-6 items-center w-full">
     <div
       class="h-full grid gap-2 lg:gap-4 place-content-center rounded-xl border-2 border-teal-700 p-4 w-full"
@@ -16,9 +18,11 @@
       <h3 class="md:text-xl lg:text-2xl font-extralight text-center">
         Number of entries
       </h3>
-      <span class="text-center font-semibold text-xl lg:text-3xl">{{
-        (olympic$ | async)?.participations?.length
-      }}</span>
+      <ng-container *ngIf="olympic$ | async; else loading">
+        <span class="text-center font-semibold text-xl lg:text-3xl">{{
+          (olympic$ | async)?.participations?.length
+        }}</span>
+      </ng-container>
     </div>
     <div
       class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
@@ -26,9 +30,11 @@
       <h3 class="lg:text-2xl md:text-lg font-extralight text-center">
         Total number medals
       </h3>
-      <span class="text-center font-semibold text-xl lg:text-3xl">
-        {{ totalMedals$ | async }}
-      </span>
+      <ng-container *ngIf="totalMedals$ | async; else loading">
+        <span class="text-center font-semibold text-xl lg:text-3xl">
+          {{ totalMedals$ | async }}
+        </span>
+      </ng-container>
     </div>
     <div
       class="h-full grid gap-4 rounded-xl border-2 border-teal-700 p-4 w-full place-content-center"
@@ -36,9 +42,11 @@
       <h3 class="lg:text-2xl md:text-lg font-extralight text-center">
         Total number of athletes
       </h3>
-      <span class="text-center font-semibold text-xl lg:text-3xl">
-        {{ totalAthletes$ | async }}
-      </span>
+      <ng-container *ngIf="totalAthletes$ | async; else loading">
+        <span class="text-center font-semibold text-xl lg:text-3xl">
+          {{ totalAthletes$ | async }}
+        </span>
+      </ng-container>
     </div>
   </div>
   <ng-container *ngIf="lineChartData$ | async; else loading">
