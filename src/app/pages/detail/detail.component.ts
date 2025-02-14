@@ -1,15 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
-import { ActivatedRoute, OutletContext, RouterModule } from '@angular/router';
+import { ActivatedRoute,  RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { map, Observable, Subscription, take } from 'rxjs';
+import { map, Observable} from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
-import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
 interface LineChartDatas {
@@ -29,7 +25,7 @@ export class DetailComponent implements OnInit {
   olympic$!: Observable<Olympic | undefined>;
   lineChartData$!: Observable<LineChartDatas[] | undefined>;
   totalMedals$!: Observable<number>;
-  totalAthletes$!: Observable<number>;
+  totalAthletes$!: Observable<number>;         
 
   // Transformer tous mes appels aux méthodes en observable pour pipe | async
 
