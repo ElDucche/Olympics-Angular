@@ -10,7 +10,7 @@ import { Olympic } from '../models/Olympic';
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private _olympics$ = new BehaviorSubject<Olympic[] | null>(null);
+  private _olympics$ = new BehaviorSubject<Olympic[] | undefined>(undefined);
 
   constructor(private http: HttpClient) {}
 
@@ -21,24 +21,24 @@ export class OlympicService {
         // TODO: improve error handling
         console.error(error);
         // can be useful to end loading state and let the user know something went wrong
-        this._olympics$.next(null);
+        this._olympics$.next(undefined);
         return caught;
       }),
     );
   }
 
-  get olympics$() : Observable<Olympic[] | null> {
+  get olympics$() : Observable<Olympic[] | undefined> {
     return this._olympics$.asObservable();
   }
-  getOlympicByCountry(country: string): Observable<Olympic | null> {
+  getOlympicByCountry(country: string): Observable<Olympic | undefined> {
     return this._olympics$.pipe(
       map((olympics) => {
         if (olympics) {
           return olympics.find(
             (olympic) => olympic.country.toLowerCase() === country
-          ) || null;
+          ) || undefined;
         }
-        return null;
+        return undefined;
       }),
       catchError((error, caught) => { 
         console.error(error);

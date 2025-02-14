@@ -4,13 +4,15 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-
 import { Olympic } from 'src/app/core/models/Olympic';
-import { PieChartDatas } from 'src/app/core/models/PieChartDatas';
 import { OlympicService } from 'src/app/core/services/olympic.service';
-import { Router, RouterModule } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
+import { map, Observable } from 'rxjs';
+
+interface PieChartData {
+  name: string;
+  value: number;
+}
 
 @Component({
   selector: 'app-home',
@@ -18,10 +20,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  public olympics?: Olympic[];
-  
+  public olympics$!: Observable<Olympic[] | undefined>;
+  pieChartData$!: Observable<PieChartData[]>;
+
   view: [number, number] = [600, 400];
 
+  private viewWidth!: number;
+  private setViewWidth(): void {
+    if (window.innerWidth < 576) {
+      this.viewWidth = 300;
+    } else if (window.innerWidth >= 576 && window.innerWidth < 768) {
+      this.viewWidth = 500;
+    } else if (window.innerWidth >= 768 && window.innerWidth < 992) {
+      this.viewWidth = 700;
+    } else {
+      this.viewWidth = 700;
+    }
+    this.view = [this.viewWidth, 400];
   }
 
   constructor(
@@ -31,10 +46,10 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.olympicService.olympics$.subscribe((olympics) => {
-      if (olympics) this.olympics = olympics;
-      this.cdk.markForCheck();
-    });
+    this.olympics$ = this.olympicService.olympics$;
+    this.pieChartData$ = this.olympics$.pipe(
+      map((olympics) => this.convertOlympicsToPieChartData(olympics))
+    );
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
@@ -43,11 +58,12 @@ export class HomeComponent implements OnInit {
   }
 
   convertOlympicsToPieChartData(
-  ): { name: string; value: number }[] {
+    olympics: Olympic[] | undefined
+  ): PieChartData[] {
     const data: { name: string; value: number }[] = [];
 
-    if (this.olympics) {
-      this.olympics.forEach((olympic) => {
+    if (olympics) {
+      olympics.forEach((olympic) => {
         data.push({
           name: olympic.country,
           value: olympic.participations.reduce(
@@ -60,8 +76,8 @@ export class HomeComponent implements OnInit {
 
     return data;
   }
-  colorScheme : { domain : Array<string> }= {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  colorScheme: { domain: Array<string> } = {
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
 
   onSelect(data: any): void {
@@ -70,5 +86,4 @@ export class HomeComponent implements OnInit {
     const slug = name.split(' ').join('-').toLowerCase();
     this.router.navigate([`/details/${slug}`]);
   }
-
 }
