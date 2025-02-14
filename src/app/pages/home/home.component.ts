@@ -1,11 +1,12 @@
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
 } from '@angular/core';
+
 import { Olympic } from 'src/app/core/models/Olympic';
+import { PieChartDatas } from 'src/app/core/models/PieChartDatas';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Router, RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -21,18 +22,6 @@ export class HomeComponent implements OnInit {
   
   view: [number, number] = [600, 400];
 
-  private viewWidth!: number;
-  private setViewWidth(): void {
-    if (window.innerWidth < 576) {
-      this.viewWidth = 300;
-    } else if (window.innerWidth >= 576 && window.innerWidth < 768) {
-      this.viewWidth = 500;
-    } else if (window.innerWidth >= 768 && window.innerWidth < 992) {
-      this.viewWidth = 700;
-    } else {
-      this.viewWidth = 700;
-    }
-    this.view = [this.viewWidth, 400];
   }
 
   constructor(
@@ -71,7 +60,6 @@ export class HomeComponent implements OnInit {
 
     return data;
   }
-
   colorScheme : { domain : Array<string> }= {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
   };
@@ -82,4 +70,5 @@ export class HomeComponent implements OnInit {
     const slug = name.split(' ').join('-').toLowerCase();
     this.router.navigate([`/details/${slug}`]);
   }
+
 }
