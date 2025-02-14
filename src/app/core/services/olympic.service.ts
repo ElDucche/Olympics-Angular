@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, delay, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { Olympic } from '../models/Olympic';
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private _olympics$ = new BehaviorSubject<Olympic[] | undefined>(undefined);
+  private _olympics$ = new BehaviorSubject<Olympic[] | null>(null);
 
   constructor(private http: HttpClient) {}
 
@@ -20,30 +20,13 @@ export class OlympicService {
         // TODO: improve error handling
         console.error(error);
         // can be useful to end loading state and let the user know something went wrong
-        this._olympics$.next(undefined);
+        this._olympics$.next(null);
         return caught;
       }),
     );
   }
 
-  get olympics$() : Observable<Olympic[] | undefined> {
+  get olympics$() : Observable<Olympic[] | null> {
     return this._olympics$.asObservable();
-  }
-
-  getOlympicByCountry(country: string): Observable<Olympic | undefined> {
-    return this._olympics$.pipe(
-      map((olympics) => {
-        if (olympics) {
-          return olympics.find(
-            (olympic) => olympic.country.toLowerCase() === country
-          ) || undefined;
-        }
-        return undefined;
-      }),
-      catchError((error, caught) => { 
-        console.error(error);
-        return caught;
-      }),
-    );
   }
 }
