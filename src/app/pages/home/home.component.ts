@@ -80,9 +80,8 @@ export class HomeComponent implements OnInit {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
 
-  onSelect(data: any): void {
+  onSelect(data: {label: string, name: string, value: number}): void {
     const { name } = JSON.parse(JSON.stringify(data));
-    console.log('Item clicked', JSON.parse(JSON.stringify(data)));
     const slug = name.split(' ').join('-').toLowerCase();
     this.router.navigate([`/details/${slug}`]);
   }

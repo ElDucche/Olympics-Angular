@@ -6,6 +6,7 @@ import { ActivatedRoute,  RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { map, Observable} from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
+import { Participation } from 'src/app/core/models/Participation';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
 interface LineChartDatas {
@@ -48,13 +49,12 @@ export class DetailComponent implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    private olympicService: OlympicService // private cdk: ChangeDetectorRef
+    private readonly olympicService: OlympicService // private cdk: ChangeDetectorRef
   ) {
     this.countryName = String(route.snapshot.params['name']).toLowerCase();
   }
 
   ngOnInit(): void {
-    console.log('Initialisation du composant');
     const formattedName = this.countryName.split('-').join(' ');
     this.olympic$ = this.olympicService.getOlympicByCountry(formattedName);
     this.lineChartData$ = this.olympic$.pipe(
@@ -64,9 +64,9 @@ export class DetailComponent implements OnInit {
       map((olympic) => {
         return (
           olympic?.participations?.reduce(
-            (acc: number, curr: any) => acc + curr.medalsCount,
+            (acc: number, curr: Participation) => acc + curr.medalsCount,
             0
-          ) || 0
+          ) ?? 0
         );
       })
     );
@@ -74,17 +74,16 @@ export class DetailComponent implements OnInit {
       map((olympic) => {
         return (
           olympic?.participations?.reduce(
-            (acc: number, curr: any) => acc + curr.athleteCount,
+            (acc: number, curr: Participation) => acc + curr.athleteCount,
             0
-          ) || 0
+          ) ?? 0
         );
       })
     );
-    // this.cdk.markForCheck();
+    
     this.setViewWidth();
     window.addEventListener('resize', () => {
       this.setViewWidth();
-      // this.cdk.markForCheck();
     });
   }
 
@@ -93,7 +92,7 @@ export class DetailComponent implements OnInit {
   ): { name: string; series: { name: string; value: number }[] }[] {
     return [
       {
-        name: olympicData?.country || '',
+        name: olympicData?.country ?? '',
         series:
           olympicData?.participations.map((participation) => {
             return {
